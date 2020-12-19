@@ -1,0 +1,105 @@
+module control(
+	//input 
+	input[31:0] Instruction, //	Programmemory
+	//outputs
+	output[23:0] Ctrl
+);
+
+	reg RW;					//Register File RW = 0 (nao escreve) / RW = 1 (escreve)
+	reg[1:0] Alu;			//Alu = 0 - ADD / 1 - SUB / 2 - AND / 3 - OR
+	reg Enable_Offset;	//Extend
+	reg Mux_Alu_In;		//Mux entrada da alu 1= Exted / 0 = 0
+	reg Mux_Alu_Out;		//Mux saida da alu 0 = multiplicador / 1= Alu
+	reg MUX_WB;				//Mux write back 0 = D / 1 = M
+	reg WR;					//WR da datamemory WR = 0 (leitura) / WR = 1 (escrita)
+	reg Hab_MUL;			//Multiplicador
+	reg[4:0] Rs;			//Primeiro registro fonte
+	reg[4:0] Rt;			//Segundo registro fonte par ainstrucoes do tipo e ou register
+	reg[4:0] Rd;			//Registro Destino para instrucoes do tipo R
+	
+	
+	assign Ctrl = {RW, Alu, Enable_Offset, Mux_Alu_In, Mux_Alu_Out, MUX_WB, WR, Hab_MUL, Rs, Rt, Rd};
+	//					1		2			1			1				1				  1	    1			1	  5	5	5
+	//					23 [22:21]		20			19				18		        17		16		  15	 [14:10]	[9:5]	[4:0]
+
+	always @ (Instruction)	begin
+		Rs = Instruction[25:21];
+		Rt = Instruction[20:16];
+		WR = 0;
+		Hab_MUL = 0;
+		Alu = 0;
+		Mux_Alu_In = 0;
+		Mux_Alu_Out = 1;
+		Rd = 0;
+		MUX_WB = 0;
+		Enable_Offset = 0;
+		RW = 0;
+		
+		//instrucoes no formato i
+		if(Instruction[31:26] == 8) begin	//LW
+			Hab_MUL = 0;
+			RW = 1;					//habilita a escrita no register file
+			Alu = 0;					//habilita a soma
+			Enable_Offset = 1;	//habilita o extend
+			Mux_Alu_In = 1;		//habilita a saida extend
+			Mux_Alu_Out = 1;		//habilita a saida da ALU
+			MUX_WB = 1;				//habilita a saida M
+			WR = 0;					//habilita a leitura no datamemoruy
+			Rd = Rt;					
+		end
+		
+		
+		if(Instruction[31:26] == 9) begin	//SW
+			RW = 0;
+			Alu = 0;
+			Enable_Offset = 1;
+			Mux_Alu_In = 1;
+			Mux_Alu_Out = 1;
+			MUX_WB = 1;
+			WR = 1;
+			Rd = 0;
+		end
+		
+		
+		//intrucoes no formato R
+		if(Instruction[31:26] == 7) begin
+			Rd = Instruction[15:11];
+			RW = 1;
+			Enable_Offset = 0;
+			Mux_Alu_In = 0;
+			MUX_WB = 0;
+			WR = 0;
+			if(Instruction[10:6] == 10 && Instruction[5:0] == 50)	begin 		//MUL
+				Hab_MUL = 1;
+				Mux_Alu_Out = 0;
+			end
+			
+			else if(Instruction[10:6] == 10 && Instruction[5:0] == 32) begin	//ADD
+				Alu = 0;
+				Hab_MUL = 0;
+				Mux_Alu_Out = 1;
+			end
+			
+			else if(Instruction[10:6] == 10 && Instruction[5:0] == 34) begin	//SUB
+				Alu = 1;
+				Hab_MUL = 0;
+				Mux_Alu_Out = 1;
+			end
+			
+			else if(Instruction[10:6] == 10 && Instruction[5:0] == 36) begin	//AND
+				Alu = 2;
+				Hab_MUL = 0;
+				Mux_Alu_Out = 1;
+			end
+			
+			else if(Instruction[10:6] == 10 && Instruction[5:0] == 37) begin	//OR
+				Alu = 3;
+				Hab_MUL = 0;
+				Mux_Alu_Out = 1;
+			end
+		end
+	end
+	
+	
+endmodule
+			

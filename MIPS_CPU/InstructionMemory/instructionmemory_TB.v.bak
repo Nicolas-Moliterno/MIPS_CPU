@@ -1,0 +1,28 @@
+`timescale 1ns/100ps
+
+module instructionmemory_TB();
+
+	reg clk;
+	reg[9:0] addres;
+	wire[31:0] dataIn;
+	
+	instructionmemory DUT(
+		.clk(clk),
+		.addres(addres),
+		.data(In)
+	);
+	
+	integer i;
+	
+	initial begin	
+			clk = 0;
+			addres = 0;
+		for(i = 0;i<1024;i = i+1)
+			addres = adress + 1;
+		#100 $stop;
+	end
+	
+	always #10 clk = ~clk;
+	
+	
+endmodule

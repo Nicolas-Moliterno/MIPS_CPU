@@ -1,0 +1,39 @@
+`timescale 1ns/100ps
+module Register_TB();
+
+	reg[31:0] registerIn;
+	reg clk;
+	reg rst;
+	
+	wire[31:0] registerOut;
+	
+	Register DUT(
+		.registerIn(resgisterIn),
+		.clk(clk),
+		.rst(rst)
+		.registerOut(registerOut)
+	);
+	
+	
+	initial begin 
+		clk = 0;
+		rst = 0;
+		registerIn = 0;
+	end
+	
+	
+	integer i;
+	
+	always begin
+		
+		#20 rst = 1;
+		for (i = 0; i <= 100; i = i +1)
+			#100 registerIn = i * 1000;
+			
+		#500 $stop;
+	end
+
+	always #60 clk = ~clk;
+endmodule
+
+	

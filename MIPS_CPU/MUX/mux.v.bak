@@ -1,0 +1,19 @@
+module mux(
+	
+	//inputs
+	input[31:0] A,
+	input[31:0] B,
+	input sel,
+	
+	//outputs
+	output[31:0] muxOut
+);
+
+	always @ (*) begin
+		case(sel)
+			1'b0	:	muxOut <= A;
+			1'b1	:	muxOut <= B;
+		endcase
+	end	
+endmodule
+	

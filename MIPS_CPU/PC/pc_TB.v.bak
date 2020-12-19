@@ -1,0 +1,27 @@
+`timescale 1ns/100ps
+module pc_TB();
+	
+	reg clk;
+	reg enable;
+	reg rst;
+	
+	wire[9:0] count;
+	
+	pc DUT(
+		.clk(clk),
+		.enable(enable),
+		.rst(rst),
+		.count(count)
+	);
+	
+	initial begin
+		rst = 1;
+		
+		#5 rst = 0;
+		
+	end
+	
+	always #10 clk = ~clk;
+	
+	endmodule
+	

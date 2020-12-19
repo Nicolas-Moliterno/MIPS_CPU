@@ -1,0 +1,12 @@
+module cpu (
+	//input
+	input CLK,
+	input[31:0] Data_BUS_READ,
+	//outputs
+	output[31:0] ADDR,
+	output CS,
+	output WR,
+	output[31:0] Data_BUS_WRITE
+);
+
+

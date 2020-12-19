@@ -1,0 +1,40 @@
+`timescale 1ns/100ps
+module TB();
+	//input
+	input CLK;
+	input[31:0] Data_BUS_READ;
+	input rst;
+	//outputs
+	output[31:0] ADDR;
+	output CS;
+	output WR;
+	output[31:0] Data_BUS_WRITE;
+	
+	
+	reg CLK_SYS;
+	reg CLK_MUL;
+	
+	
+	//apagar apos confirmar que esta funcionando 
+	reg fio_PC, fio_control;
+	
+	cpu DUT (
+		.CLK(CLK),
+		.Data_BUS_READ(Data_BUS_READ),
+		.rst(rst),
+		.ADDR(ADDR),
+		.CS(CS),
+		.WR(WR),
+		.Data_BUS_WRITE(Data_BUS_WRITE)
+	);
+	
+	
+	initial begin
+								//(sinal que eu quero pegar, como eu chamo o fio no meu projeto)
+		$init_signal_spy("DUT/CLK_SYS","CLK_SYS",1);
+		$init_signal_spy("DUT/CLK_MUL","CLK_MUL",1);
+		$init_signal_spy("DUT/fio_PC","fio_PC",1);
+		$init_signal_spy("DUT/fio_control","fio_control",1);
+	end
+	
+endmodule

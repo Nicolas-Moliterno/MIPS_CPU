@@ -1,0 +1,24 @@
+`timescale 1ns/100ps
+module extend_TB();
+
+	reg[31:0] extendIn;
+	
+	wire[31:0] extendOut;
+	
+	extend DUT(
+		.extendIn(extendIn),
+		.extendOut(extendOut),
+		.start(start)
+	);
+	
+	initial begin
+		start = 1;
+		#10 extendIn = 16'b0000_0000_0000_0001;
+		
+		#10 extednIn = 16'b1000_0000_0000_0000;
+	
+		#10 start = 0;
+	end
+endmodule
+
+	

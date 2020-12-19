@@ -1,0 +1,20 @@
+module Register(
+	
+	//inputs
+	input[31:0] registerIn,
+	input clk,
+	input rst,
+	
+	//output 
+	output reg[31:0] registerOut
+);
+
+
+	always @ (posedge clk or posedge rst) begin
+			
+			if(rst)
+				registerOut <= 0;
+			else
+				registerOut <= registerIn;
+	end	
+endmodule
